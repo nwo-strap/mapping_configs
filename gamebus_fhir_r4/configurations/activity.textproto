@@ -26,7 +26,7 @@ harmonization_config: {
     local_path: "/mapping_configs/gamebus_fhir_r4/code_harmonization/ObservationCategory.harmonization.json"
   }
   code_lookup: {
-    local_path: "/mapping_configs/gamebus_fhir_r4/code_harmonization/ObservationComponent.harmonization.json"
+    local_path: "/mapping_configs/gamebus_fhir_r4/code_harmonization/ObservationComponentCode.harmonization.json"
   }
 }
 

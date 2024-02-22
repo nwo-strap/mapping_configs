@@ -299,7 +299,7 @@ def User_HumanName(User) {
 
 // Description: Convert GameBus propertyInstance into FHIR Observation.component.
 //
-//  The file `ObservationComponent.harmonization.json` is the concept mapping
+//  The file `ObservationComponentCode.harmonization.json` is the concept mapping
 //  between GameBus properties and FHIR Observation.component.code.
 //  This file has to be updated when there are new types of GameBus properties.
 //  However, GameBus properties excluded for mapping must not be added, e.g.
