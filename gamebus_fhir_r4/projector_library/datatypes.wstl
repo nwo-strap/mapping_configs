@@ -330,7 +330,7 @@ def PropertyInstance_Component(PropertyInstance, Activity) {
 //   Observation.component.value[x]: https://www.hl7.org/fhir/observation-definitions.html#Observation.component.value_x_
 //
 def Property_ValueX(PropertyInstance, Activity) {
-  // TODO: add other GameBus property types: ACTIVITY, CHALLENGE, CHALLENGE_RULE, DATE, LOTTERY, NUMBER_OF_POINTS, REWARD, VIDEO
+  // TODO: add other GameBus property types: ACTIVITY, CHALLENGE, CHALLENGE_RULE, LOTTERY, NUMBER_OF_POINTS, REWARD, VIDEO
   if (PropertyInstance.property.inputType = "INT") {
     var mapping: Convert_TerminologyCoding(PropertyInstance.property.baseUnit, "GameBusUnit", "Unit")
     valueQuantity.value: $ParseInt(PropertyInstance.value)
@@ -360,5 +360,9 @@ def Property_ValueX(PropertyInstance, Activity) {
   if (PropertyInstance.property.inputType = "COORDINATE") {
 	// valueReference: Build_Reference($StrJoin("/", "Location", ActivityID), "", "Location", "") # for FHIR R5
 	valueString: $StrJoin("/", "Location", Activity.id)
+  }
+
+  if (PropertyInstance.property.inputType = "DATE") {
+	valueDateTime: Convert_Date(PropertyInstance.value)
   }
 }
