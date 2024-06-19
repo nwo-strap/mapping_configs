@@ -307,14 +307,15 @@ def User_HumanName(User) {
 //
 // Argument(s):
 //   PropertyInstance: GameBus property instance
+//   Activity: GameBus activity message
 //
 // Output(s):
 //   Observation.component: https://www.hl7.org/fhir/observation-definitions.html#Observation.component
-def PropertyInstance_Component(PropertyInstance) {
+def PropertyInstance_Component(PropertyInstance, Activity) {
   var codes: Convert_Terminology(PropertyInstance.property.translationKey, "GameBusProperty", "ObservationComponentCode")
   if codes.coding[0].code ~= "unknown" {
       extension[]: Build_Extension("https://gamebus.eu/PropertyInstances#id", "valueInteger", PropertyInstance.id) // TODO: fix url
-      $this: Property_ValueX(PropertyInstance)
+      $this: Property_ValueX(PropertyInstance, Activity)
       code: codes
   }
 }
@@ -323,11 +324,12 @@ def PropertyInstance_Component(PropertyInstance) {
 //
 // Argument(s):
 //   PropertyInstance: GameBus property instance
+//   Activity: GameBus activity message
 //
 // Output(s):
 //   Observation.component.value[x]: https://www.hl7.org/fhir/observation-definitions.html#Observation.component.value_x_
 //
-def Property_ValueX(PropertyInstance) {
+def Property_ValueX(PropertyInstance, Activity) {
   // TODO: add other GameBus property types: ACTIVITY, CHALLENGE, CHALLENGE_RULE, DATE, LOTTERY, NUMBER_OF_POINTS, REWARD, VIDEO
   if (PropertyInstance.property.inputType = "INT") {
     var mapping: Convert_TerminologyCoding(PropertyInstance.property.baseUnit, "GameBusUnit", "Unit")
@@ -353,5 +355,10 @@ def Property_ValueX(PropertyInstance) {
   if (PropertyInstance.property.inputType = "BOOL") {
     valueBoolean (if $ToLower(PropertyInstance.value) = "true"): true
     valueBoolean (if $ToLower(PropertyInstance.value) = "false"): false
+  }
+
+  if (PropertyInstance.property.inputType = "COORDINATE") {
+	// valueReference: Build_Reference($StrJoin("/", "Location", ActivityID), "", "Location", "") # for FHIR R5
+	valueString: $StrJoin("/", "Location", Activity.id)
   }
 }

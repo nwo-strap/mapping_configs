@@ -31,10 +31,16 @@ def Player_Patient(Player) {
 //
 def Process_Activity(Activity) {
   var resourceType: Convert_TerminologyCode(Activity.gameDescriptor.translationKey, "GameBusGameDescriptor", "Activity2Resource")
-  [] (if resourceType = "Observation"): Activity_Observation(Activity);
-  if resourceType = "Location" {
-    []: ActivityWithLocation_Observation(Activity);
-    []: Activity_Location(Activity);
+  if (resourceType = "Observation") {
+    []: Activity_Observation(Activity)
+    var ins: Activity.propertyInstances[where $.property.translationKey = "COORDINATES"]
+    if ($ListLen(ins) > 0) {
+      []: Activity_Location(Activity)
+    }
+  }
+
+  if (resourceType = "Location") {
+    []: Activity_Location(Activity)
   }
 }
 
@@ -68,22 +74,8 @@ def Activity_Observation(Activity) {
   extension[]: Build_Extension("https://gamebus.eu/dataProvider#image", "valueUrl", Activity.dataProvider.image) // TODO: fix url
   extension[]: Build_Extension("https://gamebus.eu/dataProvider#isConnected", "valueBoolean", Activity.dataProvider.isConnected) // TODO: fix url
 
-  component[]: PropertyInstance_Component(Activity.propertyInstances[])
+  component[]: PropertyInstance_Component(Activity.propertyInstances[], Activity)
 }
-
-// Description: Transform GameBus Activity containing location to FHIR Observation resource
-//
-// Argument(s):
-//   Activity: GameBus Activity
-//
-// Output(s):
-//   FHIR Observation resource: https://www.hl7.org/fhir/observation.html
-//
-def ActivityWithLocation_Observation(Activity) {
-  $this: Activity_Observation(Activity)
-  focus[]: Build_Reference($StrJoin("/", "Location", Activity.id), "", "Location", "")
-}
-
 // Description: Transform GameBus Activity to FHIR Location resource
 //
 // Argument(s):
@@ -95,7 +87,8 @@ def ActivityWithLocation_Observation(Activity) {
 def Activity_Location(Activity) {
   resourceType: "Location"
   id: $StrFmt("%d", Activity.id)
-  var loc: $StrSplit(Activity.propertyInstances[1].value, ",")
+  var ins: Activity.propertyInstances[where $.property.translationKey = "COORDINATES"]
+  var loc: $StrSplit(ins[0].value, ",")
   var latitude: $StrSplit(loc[0], "(")
   var longitude: $StrSplit(loc[1], ")")
 
