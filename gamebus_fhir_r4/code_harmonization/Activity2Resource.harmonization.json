@@ -46,7 +46,7 @@
           "code": "LOCATION",
           "target": [
             {
-              "code": "Location",
+              "code": "Observation",
               "equivalence": "equivalent"
             }
           ]

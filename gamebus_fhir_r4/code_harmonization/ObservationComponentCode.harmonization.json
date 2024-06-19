@@ -7,6 +7,17 @@
     {
       "element": [
         {
+          "code": "COORDINATES",
+          "display": "COORDINATES",
+          "target": [
+            {
+              "code": "80412-0",
+              "display": "Encounter location",
+              "equivalence": "equivalent"
+            }
+          ]
+        },
+        {
           "code": "STEPS",
           "display": "STEPS",
           "target": [
